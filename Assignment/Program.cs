@@ -31,7 +31,7 @@ static void GetUser(RestClient client)
         // Access the "data" array and its first element
         string? title = userjson?["title"]?.ToString();
 
-        Console.WriteLine("Get title:"+title);
+        Console.WriteLine("Get title:"+title); 
     }
     else
     {
