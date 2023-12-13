@@ -52,7 +52,7 @@ static void CreateUser(RestClient client)
 //Update
 static void UpdateUser(RestClient client)
 {
-    var updateUserRequest = new RestRequest("users/1", Method.Put);
+    var updateUserRequest = new RestRequest("posts/1", Method.Put);
     updateUserRequest.AddHeader("Content-Type", "application/json");
     updateUserRequest.AddJsonBody(new { userId = "10", title = "Holiday", body = "sunday" });
     var updateUserResponse = client.Execute(updateUserRequest);
@@ -62,7 +62,7 @@ static void UpdateUser(RestClient client)
 //Delete
 static void DeleteUser(RestClient client)
 {
-    var deleteUserRequest = new RestRequest("users/1", Method.Delete);
+    var deleteUserRequest = new RestRequest("posts/1", Method.Delete);
     var deleteUserResponse = client.Execute(deleteUserRequest);
     Console.WriteLine("deleted " + deleteUserResponse.ResponseStatus);
 }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestEX;
 using RestSharp;
 
 //reqres.in API
@@ -47,11 +49,13 @@ var client = new RestClient(baseUrl);
 //var deleteUserResponse = client.Execute(deleteUserRequest);
 //Console.WriteLine("deleted " + deleteUserResponse.ResponseStatus);
 
-GetUsers(client);
-GetUser(client);
-CreateUser(client);
-UpdateUser(client);
-DeleteUser(client);
+//GetUsers(client);
+//GetUser(client);
+//CreateUser(client);
+//UpdateUser(client);
+//DeleteUser(client);
+APIwithExceptions apiexp = new APIwithExceptions();
+apiexp.GetSingleUser();
 
 //GetAll
 static void GetUsers(RestClient client)
@@ -62,29 +66,29 @@ static void GetUsers(RestClient client)
     Console.WriteLine("get :"+getUsersResponse.Content);
 }
 
-//GetUser
-static void GetUser(RestClient client)
-{
-    var getUserRequest = new RestRequest("users", Method.Get);
-    getUserRequest.AddQueryParameter("page", "1"); // Adding query parameter
-    var getUserResponse = client.Execute(getUserRequest);
-    if (getUserResponse.StatusCode == System.Net.HttpStatusCode.OK)
-    {
-        // Parse json response content
-        JObject? userjson = JObject.Parse(getUserResponse?.Content);
-        string? page = userjson?["page"]?.ToString();
+////GetUser
+//static void GetUser(RestClient client)
+//{
+//    var getUserRequest = new RestRequest("users", Method.Get);
+//    getUserRequest.AddQueryParameter("page", "1"); // Adding query parameter
+//    var getUserResponse = client.Execute(getUserRequest);
+//    if (getUserResponse.StatusCode == System.Net.HttpStatusCode.OK)
+//    {
+//        // Parse json response content
+//        JObject? userjson = JObject.Parse(getUserResponse?.Content);
+//        string? page = userjson?["page"]?.ToString();
 
-        // Access the "data" array and its first element
-        string? userName = userjson?["data"]?[1]?["first_name"]?.ToString();
-        string? userLastName = userjson?["data"]?[1]?["last_name"]?.ToString();
+//        // Access the "data" array and its first element
+//        string? userName = userjson?["data"]?[1]?["first_name"]?.ToString();
+//        string? userLastName = userjson?["data"]?[1]?["last_name"]?.ToString();
 
-        Console.WriteLine($"Get User Name: {page} {userName} {userLastName}");
-    }
-    else
-    {
-        Console.WriteLine($"Error: {getUserResponse.ErrorMessage}");
-    }
-}
+//        Console.WriteLine($"Get User Name: {page} {userName} {userLastName}");
+//    }
+//    else
+//    {
+//        Console.WriteLine($"Error: {getUserResponse.ErrorMessage}");
+//    }
+//}
 
 //Create
 static void CreateUser(RestClient client)
@@ -114,3 +118,21 @@ static void DeleteUser(RestClient client)
     Console.WriteLine("deleted " + deleteUserResponse.ResponseStatus);
 }
 
+//GetUser
+static void GetUser(RestClient client)
+{
+    var getUserRequest = new RestRequest("users/1", Method.Get);
+    var getUserResponse = client.Execute(getUserRequest);
+    if (getUserResponse.StatusCode == System.Net.HttpStatusCode.OK)
+    {
+        //deserialization json response content into c# object
+        var response = JsonConvert.DeserializeObject<UserDataResponse>(getUserResponse.Content);
+        UserData? user = response?.Data;
+
+        Console.WriteLine("user id:" + user?.Id + " email:" + user?.Email + " name:" + user?.FirstName +" "+ user?.LastName + " avatar:" + user?.Avatar);
+    }
+    else
+    {
+        Console.WriteLine($"Error: {getUserResponse.ErrorMessage}");
+    }
+}
